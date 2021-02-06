@@ -6,7 +6,7 @@ blueprint:
 
     Press EXECUTE to apply the theme Light on Dark to the selected HASP device
 
-    ![Preview](https://github.com/HASwitchPlate/Blueprints/raw/main/Images/hasp_Theme_Light_on_Dark.png?raw=true)
+    ![Preview](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/hasp_Theme_Light_on_Dark.png?raw=true)
 
   source_url: "https://github.com/HASwitchPlate/Blueprints/blob/main/hasp_Theme_Light_on_Dark.yaml"
   domain: automation

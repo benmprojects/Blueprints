@@ -6,7 +6,7 @@ blueprint:
 
     A HASP button displays the current temperature on the right with a dynamic thermometer icon on the left and (optional) colors.
 
-    ![Preview](https://github.com/HASwitchPlate/Blueprints/raw/main/Images/hasp_Display_Temperature_with_Icon_and_Colors.png?raw=true)
+    ![Preview](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/hasp_Display_Temperature_with_Icon_and_Colors.png?raw=true)
 
     ## HASP Page and Button reference
 
@@ -16,7 +16,7 @@ blueprint:
 
     | Pages 1-3 |
     |-----------|
-    | ![Pages 1-3](https://github.com/HASwitchPlate/Blueprints/raw/main/Images/NextionUI_p1-p3_4buttons.png?raw=true) |
+    | ![Pages 1-3](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p1-p3_4buttons.png?raw=true) |
 
     </details>
 

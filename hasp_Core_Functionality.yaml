@@ -6,7 +6,7 @@ blueprint:
 
     Provides core HASP functionality. Deploy one copy of this blueprint for each HASP device.
 
-    ![Preview](https://github.com/HASwitchPlate/Blueprints/raw/main/Images/hasp_Core_Functionality.png?raw=true)
+    ![Preview](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/hasp_Core_Functionality.png?raw=true)
 
     ## HASP Font reference
 
@@ -41,7 +41,7 @@ blueprint:
 
     ### Font examples
 
-    ![HASP Fonts 0-3](https://github.com/HASwitchPlate/Blueprints/raw/main/Images/NextionUI_Fonts_0-3.png?raw=true) ![HASP Fonts 4-7](https://github.com/HASwitchPlate/Blueprints/raw/main/Images/NextionUI_Fonts_4-7.png?raw=true) ![HASP Fonts 8-10](https://github.com/HASwitchPlate/Blueprints/raw/main/Images/NextionUI_Fonts_8-10.png?raw=true)
+    ![HASP Fonts 0-3](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_Fonts_0-3.png?raw=true) ![HASP Fonts 4-7](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_Fonts_4-7.png?raw=true) ![HASP Fonts 8-10](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_Fonts_8-10.png?raw=true)
 
     </details>
 
