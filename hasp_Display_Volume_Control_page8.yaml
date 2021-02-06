@@ -6,7 +6,7 @@ blueprint:
 
     The slider button on page 8 displays a volume control
 
-    ![Preview](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/hasp_Display_Volume_Control_page8.png?raw=true)
+    ![Preview](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/hasp_Display_Volume_Control_page8.png)
 
     ## HASP Page and Button reference
 
@@ -16,7 +16,7 @@ blueprint:
 
     | Page 8 |
     |--------|
-    | ![Page 8](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p8_5buttons+1slider.png?raw=true) |
+    | ![Page 8](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p8_5buttons+1slider.png) |
 
 
     </details>

@@ -6,7 +6,7 @@ blueprint:
 
     A HASP button displays a dimmer control on page 4 and 5 with a toggle on/off icon to the left.
 
-    ![Preview](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/hasp_Display_Dimmer_with_Icon.png?raw=true)
+    ![Preview](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/hasp_Display_Dimmer_with_Icon.png)
 
     ## HASP Page and Button reference
 
@@ -16,7 +16,7 @@ blueprint:
 
     | Pages 4-5 |
     |-----------|
-    | ![Pages 4-5](https://github.com/aderusha/HASwitchPlate/raw/dev/Documentation/Images/NextionUI_p4-p5_3sliders.png?raw=true?raw=true) |
+    | ![Pages 4-5](https://github.com/aderusha/HASwitchPlate/raw/dev/Documentation/Images/NextionUI_p4-p5_3sliders.png) |
 
     </details>
 
