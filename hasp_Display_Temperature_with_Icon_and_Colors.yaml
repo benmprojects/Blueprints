@@ -373,7 +373,7 @@ action:
                   - service: mqtt.publish
                     data:
                       topic: "{{jsoncommandtopic}}"
-                      payload: '["delay=1","xstr {{xpos}},{{ypos}},{{iconwidth}},{{iconheight}},{{iconfont}},{{selectedfg}},0,1,1,3,\"{{icon}}\""]'
+                      payload: '["delay=1","xstr {{xpos}},{{ypos}},{{iconwidth}},{{iconheight}},{{iconfont}},{{tempcolor}},0,1,1,3,\"{{icon}}\""]'
               #########################################################################
               # Theme: Apply unselected foreground color on change
               - conditions:
@@ -390,7 +390,7 @@ action:
                   - service: mqtt.publish
                     data:
                       topic: "{{jsoncommandtopic}}"
-                      payload: '["delay=1","xstr {{xpos}},{{ypos}},{{iconwidth}},{{iconheight}},{{iconfont}},{{selectedfg}},0,1,1,3,\"{{icon}}\""]'
+                      payload: '["delay=1","xstr {{xpos}},{{ypos}},{{iconwidth}},{{iconheight}},{{iconfont}},{{tempcolor}},0,1,1,3,\"{{icon}}\""]'
               #########################################################################
               # Theme: Apply unselected background color on change
               - conditions:
@@ -407,7 +407,7 @@ action:
                   - service: mqtt.publish
                     data:
                       topic: "{{jsoncommandtopic}}"
-                      payload: '["delay=1","xstr {{xpos}},{{ypos}},{{iconwidth}},{{iconheight}},{{iconfont}},{{selectedfg}},0,1,1,3,\"{{icon}}\""]'
+                      payload: '["delay=1","xstr {{xpos}},{{ypos}},{{iconwidth}},{{iconheight}},{{iconfont}},{{tempcolor}},0,1,1,3,\"{{icon}}\""]'
     #########################################################################
     # Catch remaining triggers to display temperature and apply text style
     default:
