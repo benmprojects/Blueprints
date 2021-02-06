@@ -481,11 +481,15 @@ action:
                     data:
                       entity_id: "light.{{haspname}}_unselected_background_color"
                       brightness: "{{default_unselected_background_brightness}}"
-                  - delay: "00:00:03"
+                  - service: mqtt.publish
+                    data:
+                      topic: "hasp/{{haspname}}/command/reboot"
+                      payload: ""
                   - service: mqtt.publish
                     data:
                       topic: "hasp/{{haspname}}/command/page"
                       payload: "{% if page_scroll %}{{page2page}}{% else %}{{page1page}}{% endif %}"
+                      retain: true
 
       #########################################################################
       # Push configuration to device when it connects
@@ -556,11 +560,6 @@ action:
                 {%- for p in range(1,12) %}{%- if p == page2page|int %}"p[{{p}}].b[2].bco2={{colorcode}}"{%- else -%}"p[{{p}}].b[2].bco={{colorcode}}"{%- endif -%},{%- endfor -%}
                 {%- if not page_scroll -%}{%- for p in range(1,12) %}{%- if p == page3page|int %}"p[{{p}}].b[3].bco2={{colorcode}}"{%- else -%}"p[{{p}}].b[3].bco={{colorcode}}"{%- endif -%}{% if not loop.last %},{% endif %}{%- endfor -%}
                 {% else %}{%- for p in range(1,12) %}"p[{{p}}].b[3].bco={{colorcode}}"{% if not loop.last %},{% endif %}{%- endfor -%}{%- endif -%}]
-
-          - service: mqtt.publish # restore active page
-            data:
-              topic: "hasp/{{haspname}}/command/page"
-              payload: '{{states("number." ~ haspname ~ "_active_page")|int}}'
           - service: mqtt.publish # request sensor update
             data:
               topic: "hasp/{{haspname}}/command"
