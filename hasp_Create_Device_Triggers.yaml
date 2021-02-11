@@ -1,0 +1,158 @@
+blueprint:
+  name: "HASP create device triggers"
+  description: |
+
+    # Description
+
+    Create [Device Triggers](https://www.home-assistant.io/integrations/device_trigger.mqtt/) for each of the HASP buttons defined below.  Device triggers can be utilized while creating your own automations through the Home Assistant UI.
+
+    This allows for the easy creation of automations which will be triggered when pressing buttons on your HASP.
+
+    ## HASP Page and Button reference
+
+    <details>
+
+    | Page 0 | Pages 1-3 | Pages 4-5 |
+    |--------|-----------|-----------|
+    | ![Page 0](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p0_Init_Screen.png) | ![Pages 1-3](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p1-p3_4buttons.png) | ![Pages 4-5](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p4-p5_3sliders.png) |
+
+    | Page 6 | Page 7 | Page 8 |
+    |--------|--------|--------|
+    | ![Page 6](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p6_8buttons.png) | ![Page 7](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p7_12buttons.png) | ![Page 8](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p8_5buttons+1slider.png) |
+
+    | Page 9 | Page 10 | Page 11 |
+    |--------|---------|---------|
+    | ![Page 9](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p9_9buttons.png) | ![Page 10](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p10_5buttons.png) | ![Page 11](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p11_1button.png)
+
+    </details>
+
+  source_url: "https://github.com/HASwitchPlate/Blueprints/blob/main/hasp_Create_Device_Triggers.yaml"
+  domain: automation
+  input:
+    haspconnected:
+      name: "HASP Device"
+      description: "Select the HASP device"
+      selector:
+        entity:
+          integration: mqtt
+          domain: binary_sensor
+          device_class: connectivity
+    objects:
+      name: "HASP buttons"
+      description: "Create one device trigger for each button in this list."
+      default:
+        - p[1].b[4]
+        - p[1].b[5]
+        - p[1].b[6]
+        - p[1].b[7]
+      selector:
+        object:
+
+mode: parallel
+max_exceeded: silent
+
+variables:
+  haspconnected: !input haspconnected
+  objects: !input objects
+  haspname: '{{ haspconnected.split(".")[1].split("_connected")[0] }}'
+  statetopic: '{{ "hasp/" ~ haspname ~ "/state" }}'
+  haspsensor: '{{"sensor." ~ haspname ~ "_sensor"}}'
+  haspClientId: '{{state_attr(haspsensor, "haspClientID")}}'
+  haspManufacturer: '{{state_attr(haspsensor, "haspManufacturer")}}'
+  haspModel: '{{state_attr(haspsensor, "haspModel")}}'
+  sw_version: '{{state_attr(haspsensor, "espVersion")}}'
+
+trigger:
+  - platform: state
+    entity_id: !input haspconnected
+    to: "on"
+  - platform: homeassistant
+    event: start
+
+condition:
+  - condition: state
+    entity_id: !input haspconnected
+    state: "on"
+
+action:
+  - choose:
+      #########################################################################
+      # Send device trigger discovery messages when the user presses EXECUTE
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger is not defined }}"
+        sequence:
+          repeat:
+            count: "{{objects|length}}"
+            sequence:
+              - service: mqtt.publish
+                data:
+                  topic: "homeassistant/device_automation/{{haspname}}/{{objects[repeat.index-1]|replace('.','')|replace('[','')|replace(']','')}}-ON/config"
+                  payload: >-
+                    {"automation_type":"trigger",
+                    "payload":"ON",
+                    "topic":"hasp/{{haspname}}/state/{{objects[repeat.index-1]}}",
+                    "type":"button_short_press",
+                    "subtype":"{{objects[repeat.index-1]}}",
+                    "device":{
+                    "identifiers":["{{haspClientId}}"],
+                    "name":"{{haspname}}",
+                    "manufacturer":"{{haspManufacturer}}",
+                    "model":"{{haspModel}}",
+                    "sw_version":{{sw_version}}
+                    }}
+              - service: mqtt.publish
+                data:
+                  topic: "homeassistant/device_automation/{{haspname}}/{{objects[repeat.index-1]|replace('.','')|replace('[','')|replace(']','')}}-OFF/config"
+                  payload: >-
+                    {"automation_type":"trigger",
+                    "payload":"OFF",
+                    "topic":"hasp/{{haspname}}/state/{{objects[repeat.index-1]}}",
+                    "type":"button_short_release",
+                    "subtype":"{{objects[repeat.index-1]}}",
+                    "device":{
+                    "identifiers":["{{haspClientId}}"],
+                    "name":"{{haspname}}",
+                    "manufacturer":"{{haspManufacturer}}",
+                    "model":"{{haspModel}}",
+                    "sw_version":{{sw_version}}
+                    }}
+    #########################################################################
+    # Send device trigger discovery messages when device is connected or home assistant starts
+    default:
+      - repeat:
+          count: "{{objects|length}}"
+          sequence:
+            - service: mqtt.publish
+              data:
+                topic: "homeassistant/device_automation/{{haspname}}/{{objects[repeat.index-1]|replace('.','')|replace('[','')|replace(']','')}}-ON/config"
+                payload: >-
+                  {"automation_type":"trigger",
+                  "payload":"ON",
+                  "topic":"hasp/{{haspname}}/state/{{objects[repeat.index-1]}}",
+                  "type":"button_short_press",
+                  "subtype":"{{objects[repeat.index-1]}}",
+                  "device":{
+                  "identifiers":["{{haspClientId}}"],
+                  "name":"{{haspname}}",
+                  "manufacturer":"{{haspManufacturer}}",
+                  "model":"{{haspModel}}",
+                  "sw_version":{{sw_version}}
+                  }}
+            - service: mqtt.publish
+              data:
+                topic: "homeassistant/device_automation/{{haspname}}/{{objects[repeat.index-1]|replace('.','')|replace('[','')|replace(']','')}}-OFF/config"
+                payload: >-
+                  {"automation_type":"trigger",
+                  "payload":"OFF",
+                  "topic":"hasp/{{haspname}}/state/{{objects[repeat.index-1]}}",
+                  "type":"button_short_release",
+                  "subtype":"{{objects[repeat.index-1]}}",
+                  "device":{
+                  "identifiers":["{{haspClientId}}"],
+                  "name":"{{haspname}}",
+                  "manufacturer":"{{haspManufacturer}}",
+                  "model":"{{haspModel}}",
+                  "sw_version":{{sw_version}}
+                  }}
+  
