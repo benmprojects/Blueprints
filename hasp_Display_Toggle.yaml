@@ -4,7 +4,9 @@ blueprint:
 
     # Description
 
-    Press a button on the HASP to toggle the state of an entity.  The button colors will change in response to the on/off state of the selected entity.
+    Press a button on the HASP to toggle the state of an entity.  The button colors will change in response to the on/off state or attribute of the selected entity.
+
+    There are a lot of options below! No worries, the defaults should work in a lot of cases.
 
     ![Preview](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/hasp_Display_Toggle.gif)
 
@@ -85,11 +87,11 @@ blueprint:
     | 10     | Noto Sans Bold 80 point    |
 
     ### Icons
-    
+
     Fonts 5-10 also include [1400+ icons which you can copy and paste from here](https://htmlpreview.github.io/?https://github.com/aderusha/HASwitchPlate/blob/master/Documentation/Images/hasp-fontawesome5.html)
 
     ### Font examples
-    
+
     ![HASP Fonts 0-3](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_Fonts_0-3.png) ![HASP Fonts 4-7](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_Fonts_4-7.png) ![HASP Fonts 8-10](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_Fonts_8-10.png)
 
     </details>
@@ -150,24 +152,30 @@ blueprint:
       description: "Select an entity for this button to toggle"
       selector:
         entity:
+    attribute:
+      name: "Entity attribute or state to monitor"
+      description: 'Enter "state" to track the state of an entity, or enter an attribute name if the entity has a specific attribute you want to track.  Most uses will leave this set to "state".'
+      default: "state"
+      selector:
+        text:
     state_on:
       name: 'Entity state to be considered "on"'
-      description: 'For most devices, this will be "on".  If the entity state does not match this value (case insensitive), it will be considered "off"'
+      description: 'For most devices, this will be "on".  If the selected entity state or attribute does not match this value (case insensitive), it will be considered "off"'
       default: "on"
       selector:
         text:
-    service_on:
-      name: 'Service call to turn "on"'
-      description: 'Home Assistant service call to turn the entity on.  For most devices, this will be "homeassistant.turn_on"'
-      default: "homeassistant.turn_on"
+    action_on:
+      name: 'Action to turn "on"'
+      description: 'Select an action that will turn the selected device on'
+      default: 
       selector:
-        text:
-    service_off:
-      name: 'Service call to turn "off"'
-      description: 'Home Assistant service call to turn the entity off.  For most devices, this will be "homeassistant.turn_off"'
-      default: "homeassistant.turn_off"
+        action:
+    action_off:
+      name: 'Action to turn "off"'
+      description: 'Select an action that will turn the selected device off'
+      default:
       selector:
-        text:
+        action:
     text_on:
       name: 'Text to display when entity is "on"'
       description: 'Enter text to be displayed on the button when the selected entity is in the "on" state.'
@@ -259,9 +267,10 @@ variables:
   hasppage: !input hasppage
   haspbutton: !input haspbutton
   entity: !input entity
+  attribute: !input attribute
   state_on: !input state_on
-  service_on: !input service_on
-  service_off: !input service_off
+  action_on: !input action_on
+  action_off: !input action_off
   text_on: !input text_on
   text_off: !input text_off
   on_fgcolor: !input on_fgcolor
@@ -309,14 +318,15 @@ variables:
     {%- set green=(state_attr(colorsource, "rgb_color")[1] * brightness)|int -%}
     {%- set blue=(state_attr(colorsource, "rgb_color")[2] * brightness)|int -%}
     {{ (red|bitwise_and(248)*256) + (green|bitwise_and(252)*8) + (blue|bitwise_and(248)/8)|int }}
-  entity_state: '{% if states(entity)|lower == state_on %}on{% else %}off{% endif %}'
-  toggle_selectedfg: '{% if entity_state == "on" %}{% if on_fgcolor|int >= 0 %}{{on_fgcolor}}{% else %}{{selectedfg}}{% endif %}{% else %}{% if off_fgcolor|int >= 0 %}{{off_fgcolor}}{% else %}{{unselectedfg}}{% endif %}{% endif %}'
-  toggle_selectedbg: '{% if entity_state == "on" %}{% if on_bgcolor|int >= 0 %}{{on_bgcolor}}{% else %}{{selectedbg}}{% endif %}{% else %}{% if off_bgcolor|int >= 0 %}{{off_bgcolor}}{% else %}{{unselectedbg}}{% endif %}{% endif %}'
-  toggle_unselectedfg: '{% if entity_state != "on" %}{% if on_fgcolor|int >= 0 %}{{on_fgcolor}}{% else %}{{selectedfg}}{% endif %}{% else %}{% if off_fgcolor|int >= 0 %}{{off_fgcolor}}{% else %}{{unselectedfg}}{% endif %}{% endif %}'
-  toggle_unselectedbg: '{% if entity_state != "on" %}{% if on_bgcolor|int >= 0 %}{{on_bgcolor}}{% else %}{{selectedbg}}{% endif %}{% else %}{% if off_bgcolor|int >= 0 %}{{off_bgcolor}}{% else %}{{unselectedbg}}{% endif %}{% endif %}'
-  text: '{% if entity_state == "on" %}{{text_on}}{% else %}{{text_off}}{% endif %}'
-  toggle_service: '{% if entity_state == "on" %}{{service_off}}{% else %}{{service_on}}{% endif %}'
+  entity_attribute: '{% if attribute|lower == "state" %}{{states(entity)}}{% else %}{{state_attr(entity,attribute)}}{% endif %}'
+  entity_state: "{% if entity_attribute|lower == state_on %}{{true}}{% else %}{{false}}{% endif %}"
+  toggle_selectedfg: '{% if entity_state %}{% if on_fgcolor|int >= 0 %}{{on_fgcolor}}{% else %}{{selectedfg}}{% endif %}{% else %}{% if off_fgcolor|int >= 0 %}{{off_fgcolor}}{% else %}{{unselectedfg}}{% endif %}{% endif %}'
+  toggle_selectedbg: '{% if entity_state %}{% if on_bgcolor|int >= 0 %}{{on_bgcolor}}{% else %}{{selectedbg}}{% endif %}{% else %}{% if off_bgcolor|int >= 0 %}{{off_bgcolor}}{% else %}{{unselectedbg}}{% endif %}{% endif %}'
+  toggle_unselectedfg: '{% if not entity_state %}{% if on_fgcolor|int >= 0 %}{{on_fgcolor}}{% else %}{{selectedfg}}{% endif %}{% else %}{% if off_fgcolor|int >= 0 %}{{off_fgcolor}}{% else %}{{unselectedfg}}{% endif %}{% endif %}'
+  toggle_unselectedbg: '{% if not entity_state %}{% if on_bgcolor|int >= 0 %}{{on_bgcolor}}{% else %}{{selectedbg}}{% endif %}{% else %}{% if off_bgcolor|int >= 0 %}{{off_bgcolor}}{% else %}{{unselectedbg}}{% endif %}{% endif %}'
+  text: '{% if entity_state %}{{text_on}}{% else %}{{text_off}}{% endif %}'
   button_trigger: "ON"
+
 
 trigger:
   - platform: state
@@ -365,6 +375,7 @@ action:
                 "{{haspobject}}.bco2={{toggle_unselectedbg}}",
                 "{{haspobject}}.txt=\"{{text}}\""
                 ]
+
       #########################################################################
       # Update display if our entity has changed state
       - conditions: # Update display if our entity has changed state
@@ -397,13 +408,17 @@ action:
                 sequence:
                   - choose:
                       #########################################################################
-                      # Primary function: Toggle an entity in response to our selected button being pressed ON
+                      # Catch button, toggle entity OFF if currently ON
                       - conditions:
                           - condition: template
-                            value_template: '{{ (trigger.topic == jsontopic) and (trigger.payload_json.event == haspobject) and (trigger.payload_json.value == button_trigger) }}'
-                        sequence:
-                          - service: '{{toggle_service}}'
-                            entity_id: !input entity
+                            value_template: '{{ (trigger.topic == jsontopic) and (trigger.payload_json.event == haspobject) and (trigger.payload_json.value == button_trigger) and (entity_state)}}'
+                        sequence: !input action_off
+                      #########################################################################
+                      # Catch button, toggle entity ON if currently OFF
+                      - conditions:
+                          - condition: template
+                            value_template: '{{ (trigger.topic == jsontopic) and (trigger.payload_json.event == haspobject) and (trigger.payload_json.value == button_trigger)}}'
+                        sequence: !input action_on
               #########################################################################
               # Theme: Apply selected foreground color when it changes
               - conditions:
