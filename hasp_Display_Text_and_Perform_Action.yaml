@@ -1,24 +1,12 @@
 blueprint:
-  name: "HASP p[x].b[y] displays text and triggers a scene"
+  name: "HASP p[x].b[y] displays text and performs an action when pressed"
   description: |
 
     # Description
 
-    A button on the HASP will display text and trigger a scene when pressed
+    A button on the HASP will display text and perform an action when pressed
 
-    ![Preview](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/hasp_Display_Text_and_Trigger_Scene.png)
-
-    ## Examples
-
-    <details>
-
-    ### Trigger the scene "Lights On" and display a light icon + scene name
-
-    **Scene:** `scene.lights_on`
-    **Text:** `   Lights On`
-    **Font:** `8`
-
-    </details>
+    ![Preview](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/hasp_Display_Text_and_Perform_Action.png)
 
     ## HASP Page and Button reference
 
@@ -73,7 +61,7 @@ blueprint:
 
     </details>
 
-  source_url: "https://github.com/HASwitchPlate/Blueprints/blob/main/hasp_Display_Text_and_Trigger_Scene.yaml"
+  source_url: "https://github.com/HASwitchPlate/Blueprints/blob/main/hasp_Display_Text_and_Perform_Action.yaml"
   domain: automation
   input:
     haspconnected:
@@ -86,7 +74,7 @@ blueprint:
           device_class: connectivity
     page:
       name: "HASP Page"
-      description: "Select the HASP page (1-11) for this scene button. Refer to the HASP Page and Button reference above."
+      description: "Select the HASP page (1-11) for this automation. Refer to the HASP Page and Button reference above."
       default: 1
       selector:
         number:
@@ -95,19 +83,19 @@ blueprint:
           mode: slider
     button:
       name: "HASP Button"
-      description: "Select the HASP button for this scene. Refer to the HASP Page and Button reference above."
+      description: "Select the HASP button for this automation. Refer to the HASP Page and Button reference above."
       default: 4
       selector:
         number:
           min: 4
           max: 15
           mode: slider
-    scene:
-      name: "Scene to trigger"
-      description: "Select a scene for this button to trigger."
+    selected_action:
+      name: "Action to perform"
+      description: "Select an action to be performed when this button is pressed."
+      default: 
       selector:
-        entity:
-          domain: scene
+        action:
     text:
       name: "HASP Button Text"
       description: "Enter text to appear on the button."
@@ -263,9 +251,7 @@ action:
                       - conditions:
                           - condition: template
                             value_template: '{{ (trigger.topic == jsontopic) and (trigger.payload_json.event == haspobject) and (trigger.payload_json.value == "ON") }}'
-                        sequence:
-                          - service: scene.turn_on
-                            entity_id: !input scene
+                        sequence: !input selected_action
               #########################################################################
               # Theme: Apply selected foreground color when it changes
               - conditions:

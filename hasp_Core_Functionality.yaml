@@ -380,54 +380,54 @@ action:
                         and then paste in the code you see below.
 
                         ```yaml
-                          type: entities
-                          title: HASP {{haspname}}
-                          show_header_toggle: false
-                          state_color: true
+                        type: entities
+                        title: HASP {{haspname}}
+                        show_header_toggle: false
+                        state_color: true
+                        entities:
+                          - entity: number.{{haspname}}_active_page
+                          - type: divider
+                          - entity: light.{{haspname}}_backlight
+                            secondary_info: brightness
+                          - type: divider
+                          - entity: light.{{haspname}}_selected_foreground_color
+                            icon: 'mdi:palette'
+                            name: Selected Foreground Color
+                            secondary_info: brightness
+                          - entity: light.{{haspname}}_selected_background_color
+                            icon: 'mdi:palette'
+                            name: Selected Background Color
+                            secondary_info: brightness
+                          - entity: light.{{haspname}}_unselected_foreground_color
+                            icon: 'mdi:palette'
+                            name: Unselected Foreground Color
+                            secondary_info: brightness
+                          - entity: light.{{haspname}}_unselected_background_color
+                            icon: 'mdi:palette'
+                            name: Unselected Background Color
+                            secondary_info: brightness
+                          - type: divider
+                        footer:
+                          type: buttons
                           entities:
-                            - entity: number.{{haspname}}_active_page
-                            - type: divider
-                            - entity: light.{{haspname}}_backlight
-                              secondary_info: brightness
-                            - type: divider
-                            - entity: light.{{haspname}}_selected_foreground_color
-                              icon: 'mdi:palette'
-                              name: Selected Foreground Color
-                              secondary_info: brightness
-                            - entity: light.{{haspname}}_selected_background_color
-                              icon: 'mdi:palette'
-                              name: Selected Background Color
-                              secondary_info: brightness
-                            - entity: light.{{haspname}}_unselected_foreground_color
-                              icon: 'mdi:palette'
-                              name: Unselected Foreground Color
-                              secondary_info: brightness
-                            - entity: light.{{haspname}}_unselected_background_color
-                              icon: 'mdi:palette'
-                              name: Unselected Background Color
-                              secondary_info: brightness
-                            - type: divider
-                          footer:
-                            type: buttons
-                            entities:
-                              - entity: {{haspsensor}}
-                                name: Blueprints
-                                icon: 'mdi:palette-swatch'
-                                tap_action:
-                                  action: navigate
-                                  navigation_path: /config/blueprint/dashboard
-                              - entity: {{haspsensor}}
-                                name: Automations
-                                icon: 'mdi:robot'
-                                tap_action:
-                                  action: navigate
-                                  navigation_path: /config/automation/dashboard
-                              - entity: {{haspsensor}}
-                                name: HASP Admin
-                                icon: 'mdi:cellphone-text'
-                                tap_action:
-                                  action: url
-                                  url_path: http://{{haspIP}}
+                            - entity: {{haspsensor}}
+                              name: Blueprints
+                              icon: 'mdi:palette-swatch'
+                              tap_action:
+                                action: navigate
+                                navigation_path: /config/blueprint/dashboard
+                            - entity: {{haspsensor}}
+                              name: Automations
+                              icon: 'mdi:robot'
+                              tap_action:
+                                action: navigate
+                                navigation_path: /config/automation/dashboard
+                            - entity: {{haspsensor}}
+                              name: HASP Admin
+                              icon: 'mdi:cellphone-text'
+                              tap_action:
+                                action: url
+                                url_path: http://{{haspIP}}
                         ```
                       notification_id: "{{haspname}} Lovelace Configuration"
           - choose:
@@ -481,6 +481,7 @@ action:
                     data:
                       topic: "hasp/{{haspname}}/command/reboot"
                       payload: ""
+                  - delay: "00:00:02"
                   - service: mqtt.publish
                     data:
                       topic: "hasp/{{haspname}}/command/page"

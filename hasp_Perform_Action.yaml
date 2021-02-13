@@ -1,0 +1,106 @@
+blueprint:
+  name: "HASP p[x].b[y] performs an action when pressed"
+  description: |
+
+    # Description
+
+    A button on the HASP will perform an action when pressed
+
+    ## HASP Page and Button reference
+
+    <details>
+
+    | Page 0 | Pages 1-3 | Pages 4-5 |
+    |--------|-----------|-----------|
+    | ![Page 0](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p0_Init_Screen.png) | ![Pages 1-3](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p1-p3_4buttons.png) | ![Pages 4-5](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p4-p5_3sliders.png) |
+
+    | Page 6 | Page 7 | Page 8 |
+    |--------|--------|--------|
+    | ![Page 6](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p6_8buttons.png) | ![Page 7](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p7_12buttons.png) | ![Page 8](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p8_5buttons+1slider.png) |
+
+    | Page 9 | Page 10 | Page 11 |
+    |--------|---------|---------|
+    | ![Page 9](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p9_9buttons.png) | ![Page 10](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p10_5buttons.png) | ![Page 11](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p11_1button.png)
+
+    </details>
+
+  source_url: "https://github.com/HASwitchPlate/Blueprints/blob/main/hasp_Perform_Action.yaml"
+  domain: automation
+  input:
+    haspconnected:
+      name: "HASP Device"
+      description: "Select the HASP device"
+      selector:
+        entity:
+          integration: mqtt
+          domain: binary_sensor
+          device_class: connectivity
+    page:
+      name: "HASP Page"
+      description: "Select the HASP page (1-11) for this automation. Refer to the HASP Page and Button reference above."
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 11
+          mode: slider
+    button:
+      name: "HASP Button"
+      description: "Select the HASP button for this automation. Refer to the HASP Page and Button reference above."
+      default: 4
+      selector:
+        number:
+          min: 4
+          max: 15
+          mode: slider
+    selected_action:
+      name: "Action to perform"
+      description: "Select an action to be performed when this button is pressed."
+      default: 
+      selector:
+        action:
+
+mode: parallel
+max_exceeded: silent
+
+variables:
+  haspconnected: !input haspconnected
+  haspname: '{{ haspconnected.split(".")[1].split("_connected")[0] }}'
+  page: !input page
+  button: !input button
+  haspobject: '{{ "p[" ~ page ~ "].b[" ~ button ~ "]" }}'
+  commandtopic: '{{ "hasp/" ~ haspname ~ "/command/" ~ haspobject }}'
+  jsontopic: '{{ "hasp/" ~ haspname ~ "/state/json" }}'
+  jsoncommandtopic: '{{ "hasp/" ~ haspname ~ "/command/json" }}'
+
+trigger:
+  - platform: mqtt
+    topic: "hasp/+/state/json"
+
+condition:
+  - condition: state
+    entity_id: !input haspconnected
+    state: "on"
+
+action:
+  - choose:
+      #########################################################################
+      # Catch triggers fired by incoming MQTT messages
+      - conditions:
+          - condition: template
+            value_template: '{{ trigger.platform == "mqtt" }}'
+        sequence:
+          - choose:
+              #########################################################################
+              # Catch incoming JSON messages
+              - conditions:
+                  - condition: template
+                    value_template: "{{ (trigger.topic == jsontopic) and trigger.payload_json is defined }}"
+                sequence:
+                  - choose:
+                      #########################################################################
+                      # Primary function: Activate a scene in response to our selected button being pressed ON
+                      - conditions:
+                          - condition: template
+                            value_template: '{{ (trigger.topic == jsontopic) and (trigger.payload_json.event == haspobject) and (trigger.payload_json.value == "ON") }}'
+                        sequence: !input selected_action
