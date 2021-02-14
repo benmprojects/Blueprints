@@ -284,7 +284,7 @@ action:
               payload: >-
                 {"name":"{{haspname}} selected foreground color",
                 "command_topic":"hasp/{{haspname}}/light/selectedforegroundcolor/switch",
-                "state_topic":"hasp/{{haspname}}/light/alwayson",
+                "state_topic":"hasp/{{haspname}}/alwayson",
                 "rgb_command_topic":"hasp/{{haspname}}/light/selectedforegroundcolor/rgb",
                 "rgb_command_template": {% raw %}"{{ (red|bitwise_and(248)*256) + (green|bitwise_and(252)*8) + (blue|bitwise_and(248)/8)|int }}",{% endraw %}
                 "retain":false,
@@ -302,7 +302,7 @@ action:
               payload: >-
                 {"name":"{{haspname}} selected background color",
                 "command_topic":"hasp/{{haspname}}/light/selectedbackgroundcolor/switch",
-                "state_topic":"hasp/{{haspname}}/light/alwayson",
+                "state_topic":"hasp/{{haspname}}/alwayson",
                 "rgb_command_topic":"hasp/{{haspname}}/light/selectedbackgroundcolor/rgb",
                 "rgb_command_template": {% raw %}"{{ (red|bitwise_and(248)*256) + (green|bitwise_and(252)*8) + (blue|bitwise_and(248)/8)|int }}",{% endraw %}
                 "retain":false,
@@ -321,7 +321,7 @@ action:
               payload: >-
                 {"name":"{{haspname}} unselected foreground color",
                 "command_topic":"hasp/{{haspname}}/light/unselectedforegroundcolor/switch",
-                "state_topic":"hasp/{{haspname}}/light/alwayson",
+                "state_topic":"hasp/{{haspname}}/alwayson",
                 "rgb_command_topic":"hasp/{{haspname}}/light/unselectedforegroundcolor/rgb",
                 "rgb_command_template": {% raw %}"{{ (red|bitwise_and(248)*256) + (green|bitwise_and(252)*8) + (blue|bitwise_and(248)/8)|int }}",{% endraw %}
                 "retain":false,
@@ -339,7 +339,7 @@ action:
               payload: >-
                 {"name":"{{haspname}} unselected background color",
                 "command_topic":"hasp/{{haspname}}/light/unselectedbackgroundcolor/switch",
-                "state_topic":"hasp/{{haspname}}/light/alwayson",
+                "state_topic":"hasp/{{haspname}}/alwayson",
                 "rgb_command_topic":"hasp/{{haspname}}/light/unselectedbackgroundcolor/rgb",
                 "rgb_command_template": {% raw %}"{{ (red|bitwise_and(248)*256) + (green|bitwise_and(252)*8) + (blue|bitwise_and(248)/8)|int }}",{% endraw %}
                 "retain":false,
@@ -353,7 +353,7 @@ action:
               retain: true
           - service: mqtt.publish
             data:
-              topic: "hasp/{{haspname}}/light/alwayson"
+              topic: "hasp/{{haspname}}/alwayson"
               payload: "ON"
               retain: true
           # Send page select button config
@@ -376,58 +376,57 @@ action:
                       title: '{{haspname}} Lovelace "Entities" Card'
                       message: >-
                         To [create a Lovelace card](https://www.home-assistant.io/lovelace/) to control HASP {{haspname}},
-                        [create an Entities Card](https://www.home-assistant.io/lovelace/entities/), select "Show code editor",
-                        and then paste in the code you see below.
+                        add a manual card and then paste in the code you see below.
 
                         ```yaml
-                        type: entities
-                        title: HASP {{haspname}}
-                        show_header_toggle: false
-                        state_color: true
-                        entities:
-                          - entity: number.{{haspname}}_active_page
-                          - type: divider
-                          - entity: light.{{haspname}}_backlight
-                            secondary_info: brightness
-                          - type: divider
-                          - entity: light.{{haspname}}_selected_foreground_color
-                            icon: 'mdi:palette'
-                            name: Selected Foreground Color
-                            secondary_info: brightness
-                          - entity: light.{{haspname}}_selected_background_color
-                            icon: 'mdi:palette'
-                            name: Selected Background Color
-                            secondary_info: brightness
-                          - entity: light.{{haspname}}_unselected_foreground_color
-                            icon: 'mdi:palette'
-                            name: Unselected Foreground Color
-                            secondary_info: brightness
-                          - entity: light.{{haspname}}_unselected_background_color
-                            icon: 'mdi:palette'
-                            name: Unselected Background Color
-                            secondary_info: brightness
-                          - type: divider
-                        footer:
-                          type: buttons
+                          type: entities
+                          title: HASP {{haspname}}
+                          show_header_toggle: false
+                          state_color: true
                           entities:
-                            - entity: {{haspsensor}}
-                              name: Blueprints
-                              icon: 'mdi:palette-swatch'
-                              tap_action:
-                                action: navigate
-                                navigation_path: /config/blueprint/dashboard
-                            - entity: {{haspsensor}}
-                              name: Automations
-                              icon: 'mdi:robot'
-                              tap_action:
-                                action: navigate
-                                navigation_path: /config/automation/dashboard
-                            - entity: {{haspsensor}}
-                              name: HASP Admin
-                              icon: 'mdi:cellphone-text'
-                              tap_action:
-                                action: url
-                                url_path: http://{{haspIP}}
+                            - entity: number.{{haspname}}_active_page
+                            - type: divider
+                            - entity: light.{{haspname}}_backlight
+                              secondary_info: brightness
+                            - type: divider
+                            - entity: light.{{haspname}}_selected_foreground_color
+                              icon: 'mdi:palette'
+                              name: Selected Foreground Color
+                              secondary_info: brightness
+                            - entity: light.{{haspname}}_selected_background_color
+                              icon: 'mdi:palette'
+                              name: Selected Background Color
+                              secondary_info: brightness
+                            - entity: light.{{haspname}}_unselected_foreground_color
+                              icon: 'mdi:palette'
+                              name: Unselected Foreground Color
+                              secondary_info: brightness
+                            - entity: light.{{haspname}}_unselected_background_color
+                              icon: 'mdi:palette'
+                              name: Unselected Background Color
+                              secondary_info: brightness
+                            - type: divider
+                          footer:
+                            type: buttons
+                            entities:
+                              - entity: {{haspsensor}}
+                                name: Blueprints
+                                icon: 'mdi:palette-swatch'
+                                tap_action:
+                                  action: navigate
+                                  navigation_path: /config/blueprint/dashboard
+                              - entity: {{haspsensor}}
+                                name: Automations
+                                icon: 'mdi:robot'
+                                tap_action:
+                                  action: navigate
+                                  navigation_path: /config/automation/dashboard
+                              - entity: {{haspsensor}}
+                                name: HASP Admin
+                                icon: 'mdi:cellphone-text'
+                                tap_action:
+                                  action: url
+                                  url_path: http://{{haspIP}}
                         ```
                       notification_id: "{{haspname}} Lovelace Configuration"
           - choose:
