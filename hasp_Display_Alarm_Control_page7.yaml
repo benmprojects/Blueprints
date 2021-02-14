@@ -205,6 +205,7 @@ action:
                       "model":"{{haspModel}}",
                       "sw_version":{{sw_version}}
                       }}
+          - delay: "00:00:01"
           - repeat:
               count: "{{codelength}}"
               sequence:
