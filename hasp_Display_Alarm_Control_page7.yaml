@@ -270,13 +270,6 @@ action:
                               {% set button = trigger.payload_json.event.split("].b[")[1] | replace("]","") | int %}
                               {% if page == 7 and (button >= 4 and button <= 12) or button == 14%}{{true}}{% endif %}
                         sequence:
-                          - service: mqtt.publish
-                            data:
-                              topic: "debug"
-                              payload: >-
-                                {% set button = trigger.payload_json.event.split("].b[")[1] | replace("]","") | int - 3 %}
-                                {% if button == 11 %}{% set button = 0 %}{% endif %}
-                                {{button}}
                           - repeat:
                               count: "{{(codelength|int) - 1}}"
                               sequence:
@@ -292,16 +285,6 @@ action:
                                 {%- set button = trigger.payload_json.event.split("].b[")[1] | replace("]","") | int - 3 -%}
                                 {%- if button == 11 %}{% set button = 0 -%}{%- endif -%}
                                 {{button|int}}
-                          - service: mqtt.publish
-                            data:
-                              topic: "debug"
-                              payload: >-
-                                {%- set code = namespace() -%}
-                                {%- set code.value = states("number.plate01_alarmcode_" ~ codelength)|int -%}
-                                {%- for i in range(1,codelength|int) -%}
-                                {%- set code.value =  code.value|int * 10 + (states("number.plate01_alarmcode_" ~ (codelength|int - i))|int) -%}
-                                {%- endfor -%}
-                                {{code.value}}
 
                       #########################################################################
                       # Arm was pressed
