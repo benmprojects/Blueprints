@@ -1,5 +1,5 @@
 blueprint:
-  name: "HASP p[7].b[all] Page 7 displays alarm control"
+  name: "HASP p[7].b[all] displays an alarm control panel"
   description: |
 
     # Description
@@ -217,7 +217,7 @@ action:
 
       #########################################################################
       # Update alarm state if the selected alarm panel entity changes state
-      - conditions: 
+      - conditions:
           - condition: template
             value_template: '{{ (trigger.platform == "state") and (trigger.entity_id == alarmpanel) }}'
         sequence:
@@ -319,6 +319,15 @@ action:
                                 {%- set code.value =  code.value|int * 10 + (states("number.plate01_alarmcode_" ~ (codelength|int - i))|int) -%}
                                 {%- endfor -%}
                                 {{code.value|int}}
+                          - repeat:
+                              count: "{{codelength}}"
+                              sequence:
+                                # clear out code entry after arm attempt
+                                - service: number.set_value
+                                  data:
+                                    entity_id: "number.{{haspname}}_alarmcode_{{repeat.index}}"
+                                    value: -1
+
                       #########################################################################
                       # Disarm was pressed
                       - conditions:
@@ -335,7 +344,14 @@ action:
                                 {%- set code.value =  code.value|int * 10 + (states("number.plate01_alarmcode_" ~ (codelength|int - i))|int) -%}
                                 {%- endfor -%}
                                 {{code.value|int}}
-
+                          - repeat:
+                              count: "{{codelength}}"
+                              sequence:
+                                # clear out code entry after disarm attempt
+                                - service: number.set_value
+                                  data:
+                                    entity_id: "number.{{haspname}}_alarmcode_{{repeat.index}}"
+                                    value: -1
 
               #########################################################################
               # Theme: Apply selected foreground color when it changes.
