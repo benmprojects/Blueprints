@@ -6,8 +6,6 @@ blueprint:
 
     Page 7 controls a selected alarm panel for code entry and arm/disarm.
 
-    Be sure to press "EXECUTE" after making any changes.
-
     ![Preview](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/hasp_Display_Alarm_Control_page7.png)
 
     ## HASP Page and Button reference
@@ -461,3 +459,33 @@ action:
             {%- endif -%}
             "p[7].b[13].txt=\"{{alarmstate_text}}\"",
             "p[7].b[15].txt=\"{{alarmaction_text}}\""]
+      - repeat:
+          count: "{{codelength}}"
+          sequence:
+            # create number objects for each digit in codelength
+            - service: mqtt.publish
+              data:
+                topic: "homeassistant/number/{{haspname}}/alarmcode_{{repeat.index}}/config"
+                payload: >-
+                  {"name":"{{haspname}} alarmcode {{repeat.index}}",
+                  "command_topic":"hasp/{{haspname}}/alarmcode/{{repeat.index}}",
+                  "availability":{"topic":"hasp/{{haspname}}/alwayson","payload_available":"ON"},
+                  "optimistic":"true",
+                  "icon":"mdi:bell-plus-outline",
+                  "unique_id":"{{haspClientId}}-alarmcode_{{repeat.index}}",
+                  "device":{
+                  "identifiers":["{{haspClientId}}"],
+                  "name":"{{haspname}}",
+                  "manufacturer":"{{haspManufacturer}}",
+                  "model":"{{haspModel}}",
+                  "sw_version":{{sw_version}}
+                  }}
+      - delay: "00:00:01"
+      - repeat:
+          count: "{{codelength}}"
+          sequence:
+            # set initial bogus value for each digit in codelength
+            - service: number.set_value
+              data:
+                entity_id: "number.{{haspname}}_alarmcode_{{repeat.index}}"
+                value: -1
