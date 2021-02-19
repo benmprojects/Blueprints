@@ -1,5 +1,5 @@
 blueprint:
-  name: "HASP p[7].b[all] displays an alarm control panel"
+  name: "HASP p[7].b[all] displays an alarm control panel BM Test"
   description: |
     # Description
     Page 7 controls a selected alarm panel for code entry and arm/disarm.
@@ -284,9 +284,9 @@ action:
                               entity_id: !input alarmpanel
                               code: >-
                                 {%- set code = namespace() -%}
-                                {%- set code.value = states("number.{{haspname}}_alarmcode_" ~ codelength)|int -%}
+                                {%- set code.value = states("number." ~ haspname ~ "_alarmcode_" ~ codelength)|int -%}
                                 {%- for i in range(1,codelength|int) -%}
-                                {%- set code.value =  code.value|int * 10 + (states("number.{{haspname}}_alarmcode_" ~ (codelength|int - i))|int) -%}
+                                {%- set code.value =  code.value|int * 10 + (states("number." ~ haspname ~ "_alarmcode_" ~ (codelength|int - i))|int) -%}
                                 {%- endfor -%}
                                 {{code.value|int}}
                           - repeat:
@@ -309,9 +309,9 @@ action:
                               entity_id: !input alarmpanel
                               code: >-
                                 {%- set code = namespace() -%}
-                                {%- set code.value = states("number.{{haspname}}_alarmcode_" ~ codelength)|int -%}
+                                {%- set code.value = states("number." ~ haspname ~ "_alarmcode_" ~ codelength)|int -%}
                                 {%- for i in range(1,codelength|int) -%}
-                                {%- set code.value =  code.value|int * 10 + (states("number.{{haspname}}_alarmcode_" ~ (codelength|int - i))|int) -%}
+                                {%- set code.value =  code.value|int * 10 + (states("number." ~ haspname ~ "_alarmcode_" ~ (codelength|int - i))|int) -%}
                                 {%- endfor -%}
                                 {{code.value|int}}
                           - repeat:
