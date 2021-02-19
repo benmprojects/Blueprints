@@ -1,25 +1,16 @@
 blueprint:
   name: "HASP p[7].b[all] displays an alarm control panel"
   description: |
-
     # Description
-
     Page 7 controls a selected alarm panel for code entry and arm/disarm.
-
     ![Preview](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/hasp_Display_Alarm_Control_page7.png)
-
     ## HASP Page and Button reference
-
     <details>
-
     This automation is designed to work with the controls found on page 7:
-
     | Page 7 |
     |--------|
     | ![Page 7](https://raw.githubusercontent.com/HASwitchPlate/Blueprints/main/images/NextionUI_p7_12buttons.png) |
-
     </details>
-
   source_url: "https://github.com/HASwitchPlate/Blueprints/blob/main/hasp_Display_Alarm_Control_page7.yaml"
   domain: automation
   input:
@@ -244,7 +235,6 @@ action:
                 {%- endif -%}
                 "p[7].b[13].txt=\"{{alarmstate_text}}\"",
                 "p[7].b[15].txt=\"{{alarmaction_text}}\""]
-
       #########################################################################
       # Handle MQTT message triggers
       - conditions:
@@ -283,7 +273,6 @@ action:
                                 {%- set button = trigger.payload_json.event.split("].b[")[1] | replace("]","") | int - 3 -%}
                                 {%- if button == 11 %}{% set button = 0 -%}{%- endif -%}
                                 {{button|int}}
-
                       #########################################################################
                       # Arm was pressed
                       - conditions:
@@ -295,9 +284,9 @@ action:
                               entity_id: !input alarmpanel
                               code: >-
                                 {%- set code = namespace() -%}
-                                {%- set code.value = states("number.plate01_alarmcode_" ~ codelength)|int -%}
+                                {%- set code.value = states("number." ~ haspname ~ "_alarmcode_" ~ codelength)|int -%}
                                 {%- for i in range(1,codelength|int) -%}
-                                {%- set code.value =  code.value|int * 10 + (states("number.plate01_alarmcode_" ~ (codelength|int - i))|int) -%}
+                                {%- set code.value =  code.value|int * 10 + (states("number." ~ haspname ~ "_alarmcode_" ~ (codelength|int - i))|int) -%}
                                 {%- endfor -%}
                                 {{code.value|int}}
                           - repeat:
@@ -320,9 +309,9 @@ action:
                               entity_id: !input alarmpanel
                               code: >-
                                 {%- set code = namespace() -%}
-                                {%- set code.value = states("number.plate01_alarmcode_" ~ codelength)|int -%}
+                                {%- set code.value = states("number." ~ haspname ~ "_alarmcode_" ~ codelength)|int -%}
                                 {%- for i in range(1,codelength|int) -%}
-                                {%- set code.value =  code.value|int * 10 + (states("number.plate01_alarmcode_" ~ (codelength|int - i))|int) -%}
+                                {%- set code.value =  code.value|int * 10 + (states("number." ~ haspname ~ "_alarmcode_" ~ (codelength|int - i))|int) -%}
                                 {%- endfor -%}
                                 {{code.value|int}}
                           - repeat:
@@ -353,7 +342,6 @@ action:
                         "p[7].b[13].pco2={{selectedfg}}",
                         "p[7].b[15].pco2={{selectedfg}}"
                         {%- endif -%}]
-
               #########################################################################
               # Theme: Apply selected background color on change
               - conditions:
@@ -373,7 +361,6 @@ action:
                         "p[7].b[13].bco2={{selectedbg}}",
                         "p[7].b[15].bco2={{selectedbg}}"
                         {%- endif -%}]
-
               #########################################################################
               # Theme: Apply unselected foreground color on change
               - conditions:
@@ -393,7 +380,6 @@ action:
                         "p[7].b[13].pco={{unselectedfg}}",
                         "p[7].b[15].pco={{unselectedfg}}"
                         {%- endif -%}]
-
               #########################################################################
               # Theme: Apply unselected background color on change
               - conditions:
@@ -413,7 +399,6 @@ action:
                         "p[7].b[13].bco={{unselectedbg}}",
                         "p[7].b[15].bco={{unselectedbg}}"
                         {%- endif -%}]
-
     #########################################################################
     # Catch any other trigger conditions (device connect, home assistant start, etc),
     # apply styles and place text.
@@ -489,3 +474,4 @@ action:
               data:
                 entity_id: "number.{{haspname}}_alarmcode_{{repeat.index}}"
                 value: -1
+
